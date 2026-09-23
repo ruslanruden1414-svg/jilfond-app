@@ -583,6 +583,8 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
 (function(){
   if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}
 
+  var BOT_TOKEN='8864027146:AAHw-OFcsSuh6HKDaX3qeSTwr_MtsALoJgQ';
+  var ADMIN_CHAT=904789224;
   var FLOW={flat:['budget','format','spec-flat','crit-flat','req','done'],studio:['budget','format-studio','spec-studio','crit-studio','req','done'],room:['budget','spec-room','crit-room','req','done'],house:['budget','spec-house','crit-house','req','done'],townhouse:['budget','spec-townhouse','crit-townhouse','req','done'],land:['budget','spec-land','crit-land','req','done'],commercial:['budget','spec-commercial','crit-commercial','req','done'],apartment:['budget','format-apartment','crit-apartment','req','done'],garage:['budget','spec-garage','crit-garage','req','done'],warehouse:['budget','spec-warehouse','crit-warehouse','req','done']};
   var NAMES={flat:'Квартира',studio:'Студия',room:'Комната',house:'Дом',townhouse:'Таунхаус',land:'Земельный участок',commercial:'Коммерческая недвижимость',apartment:'Апартаменты',garage:'Гараж / машиноместо',warehouse:'Склад / производство'};
   var ICONS={flat:'🏢',studio:'🛋',room:'🛏',house:'🏠',townhouse:'🏘',land:'🌳',commercial:'🏬',apartment:'🏨',garage:'🚗',warehouse:'📦'};
@@ -714,17 +716,28 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
   function sendLead(){
     var d=collect();
     var st=document.getElementById('sendStatus');
-    var inTelegram=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData&&Telegram.WebApp.initData.length>0;
-    if(inTelegram&&typeof Telegram.WebApp.sendData==='function'){
-      try{
-        Telegram.WebApp.sendData(JSON.stringify(d));
-        if(st){st.textContent='✓ Заявка отправлена специалисту Жилфонда';}
-        return;
-      }catch(e){}
+    var text=buildText(d);
+    var attempted=0;
+
+    // Канал 1: sendData (штатный, если Telegram доставит)
+    if(window.Telegram&&Telegram.WebApp&&typeof Telegram.WebApp.sendData==='function'){
+      try{Telegram.WebApp.sendData(JSON.stringify(d));attempted++;}catch(e){}
     }
-    if(st){st.textContent='Откройте анкету через бота Жилфонда — кнопку «Подбор недвижимости» в чате, и отправьте ещё раз';}
-    var ob=document.getElementById('openBot');
-    if(ob){ob.style.display='block';}
+
+    // Канал 2: прямой вызов Bot API на чат админа (работает без sendData)
+    try{
+      // используем страницу-изображение: браузер выполнит GET request без CORS-ограничений
+      var leadUrl='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+ADMIN_CHAT
+        +'&text='+encodeURIComponent(text)+'&parse_mode=HTML&disable_web_page_preview=1';
+      new Image().src=leadUrl;
+      attempted++;
+    }catch(e){}
+
+    if(attempted>0){
+      if(st){st.textContent='✓ Заявка отправлена специалисту Жилфонда';}
+    }else{
+      if(st){st.textContent='Не удалось отправить заявку. Попробуйте позже.';}
+    }
   }
 
   document.addEventListener('click',function(e){
