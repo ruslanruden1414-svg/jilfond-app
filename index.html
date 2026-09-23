@@ -713,11 +713,14 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
   function sendLead(){
     var d=collect();
     var st=document.getElementById('sendStatus');
-    var sentOK=false;
-    if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.sendData){
-      try{Telegram.WebApp.sendData(JSON.stringify(d));sentOK=true;}catch(e){}
+    if(window.Telegram&&Telegram.WebApp&&typeof Telegram.WebApp.sendData==='function'){
+      try{
+        Telegram.WebApp.sendData(JSON.stringify(d));
+        if(st){st.textContent='✓ Заявка отправлена специалисту Жилфонда';}
+        return;
+      }catch(e){}
     }
-    if(st){st.textContent=sentOK?'✓ Заявка отправлена специалисту':'✓ Спасибо! Ваша заявка передана специалисту';}
+    if(st){st.textContent='‼️ Откройте анкету через бота @JILFONDProperty_bot — кнопку «Подбор недвижимости» под полем ввода';}
   }
 
   document.addEventListener('click',function(e){
