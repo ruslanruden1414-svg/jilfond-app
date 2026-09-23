@@ -99,8 +99,9 @@ jobs:
             if (data.user && data.user.trim()) lines.push('👤 <b>Telegram:</b> ' + data.user.trim());
             const text = lines.join('\n');
             console.log('LEAD found:', data.fio || data.phone, '-> sending to admin', ADMIN);
+            const kb = JSON.stringify({inline_keyboard:[[{text:'Открыть заявку',url:'https://ruslanruden1414-svg.github.io/jilfond-app/'}]]});
             try {
-              const sres = await api('sendMessage', { chat_id: ADMIN, text, parse_mode: 'HTML' });
+              const sres = await api('sendMessage', { chat_id: ADMIN, text, parse_mode: 'HTML', reply_markup: kb });
               console.log('  admin send ok:', sres.ok, 'desc:', sres.description || '');
             } catch (e) { console.error('  admin fail', e); }
             try { await api('sendMessage', { chat_id: msg.chat.id, text: 'Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.' }); } catch (e) { console.error('confirm fail', e); }
