@@ -574,6 +574,7 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
     <p>Мы получили ваши пожелания и подготовим варианты недвижимости под ваши задачи.</p>
     <p><b>Специалист Жилфонда свяжется с вами</b> и продолжит подбор.</p>
     <p class="note" id="sendStatus"></p>
+    <a id="openBot" style="display:none" class="btnLabel ready" href="https://t.me/JILFONDProperty_bot" target="_blank" rel="noopener">Открыть в боте →</a>
     <label class="btnLabel ready" data-home>Вернуться на главную</label>
   </div>
 </section>
@@ -713,14 +714,17 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
   function sendLead(){
     var d=collect();
     var st=document.getElementById('sendStatus');
-    if(window.Telegram&&Telegram.WebApp&&typeof Telegram.WebApp.sendData==='function'){
+    var inTelegram=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData&&Telegram.WebApp.initData.length>0;
+    if(inTelegram&&typeof Telegram.WebApp.sendData==='function'){
       try{
         Telegram.WebApp.sendData(JSON.stringify(d));
         if(st){st.textContent='✓ Заявка отправлена специалисту Жилфонда';}
         return;
       }catch(e){}
     }
-    if(st){st.textContent='‼️ Откройте анкету через бота @JILFONDProperty_bot — кнопку «Подбор недвижимости» под полем ввода';}
+    if(st){st.textContent='Откройте анкету через бота Жилфонда — кнопку «Подбор недвижимости» в чате, и отправьте ещё раз';}
+    var ob=document.getElementById('openBot');
+    if(ob){ob.style.display='block';}
   }
 
   document.addEventListener('click',function(e){
