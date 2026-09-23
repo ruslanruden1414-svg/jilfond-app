@@ -1,0 +1,113 @@
+name: Lead forwarding
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  BOT_TOKEN: ${{ vars.TELEGRAM_BOT_TOKEN }}
+  ADMIN_CHAT: ${{ vars.ADMIN_CHAT_ID }}
+  APP_URL: "https://ruslanruden1414-svg.github.io/jilfond-app/"
+
+jobs:
+  forward:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set menu button
+        if: env.BOT_TOKEN != '' && env.APP_URL != ''
+        run: |
+          curl -s "https://api.telegram.org/bot${BOT_TOKEN}/setChatMenuButton" \
+            --data-urlencode 'menu_button={"type":"web_app","text":"Подбор недвижимости","web_app":{"url":"'"${APP_URL}"'"}}' > /dev/null || true
+
+      - name: Forward new leads
+        if: env.BOT_TOKEN != '' && env.ADMIN_CHAT != ''
+        run: |
+          node - <<'EOF'
+          const fs = require('fs');
+          const TOKEN = process.env.BOT_TOKEN;
+          const ADMIN = process.env.ADMIN_CHAT;
+          const OFFSET_FILE = 'data/offset.txt';
+          let offset = 0;
+          if (fs.existsSync(OFFSET_FILE)) offset = parseInt(fs.readFileSync(OFFSET_FILE, 'utf8')) || 0;
+
+          async function api(method, params = {}) {
+            const url = new URL(`https://api.telegram.org/bot${TOKEN}/${method}`);
+            Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+            const res = await fetch(url);
+            return res.json();
+          }
+
+          // First run: remember the latest update so historical ones are not reprocessed
+          if (offset === 0) {
+            const r = await api('getUpdates', { limit: 1, offset: -1, timeout: 0 });
+            if (r.ok && r.result.length) {
+              offset = r.result[0].update_id;
+              fs.mkdirSync('data', { recursive: true });
+              fs.writeFileSync(OFFSET_FILE, String(offset));
+            }
+            process.exit(0);
+          }
+
+          const r = await api('getUpdates', { offset: offset + 1, timeout: 30 });
+          if (!r.ok) { console.error('getUpdates failed'); process.exit(0); }
+          let maxId = offset;
+          for (const u of r.result) {
+            if (u.update_id > maxId) maxId = u.update_id;
+            const msg = u.message || u.channel_post;
+            if (!msg || !msg.web_app_data) continue;
+            let data;
+            try { data = JSON.parse(msg.web_app_data.data); } catch { continue; }
+            const chatId = msg.chat.id;
+            const lines = [
+              '🔔 <b>Новая заявка — подбор недвижимости</b>', '',
+              '<b>Клиент:</b> ' + (data.fio || '—'),
+            ];
+            if (data.phone) lines.push('<b>Телефон:</b> ' + data.phone);
+            lines.push('');
+            lines.push('<b>Тип:</b> ' + (data.type || '—'));
+            lines.push('<b>Бюджет:</b> ' + (data.budget || '—'));
+            if (data.format) lines.push('<b>Формат:</b> ' + data.format);
+            if (data.details && data.details.length) lines.push('<b>Детали:</b> ' + data.details.join('; '));
+            if (data.criteria && data.criteria.length) lines.push('<b>Важно:</b> ' + data.criteria.join(', '));
+            if (data.requirements && data.requirements.length) lines.push('<b>Требования:</b> ' + data.requirements.join('; '));
+            if (data.reject) lines.push('<b>Не подходит:</b> ' + data.reject);
+            lines.push('');
+            if (data.user && data.user.trim()) lines.push('👤 <b>Telegram:</b> ' + data.user.trim());
+            const text = lines.join('\n');
+            console.log('Lead:', text);
+
+            // To admin
+            try { await api('sendMessage', { chat_id: ADMIN, text, parse_mode: 'HTML' }); } catch (e) { console.error(e); }
+            // Confirmation to client
+            try { await api('sendMessage', { chat_id: chatId, text: 'Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.' }); } catch (e) {}
+          }
+          if (maxId > offset) {
+            fs.mkdirSync('data', { recursive: true });
+            fs.writeFileSync(OFFSET_FILE, String(maxId));
+          }
+          EOF
+
+      - name: Commit offset
+        if: env.BOT_TOKEN != '' && env.ADMIN_CHAT != ''
+        run: |
+          git config user.name "lead-forward-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/offset.txt 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update polling offset [skip ci]"
+            git push
+          else
+            echo "no offset change"
+          fi
