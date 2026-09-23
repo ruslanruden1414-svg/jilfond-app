@@ -717,6 +717,11 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
     var d=collect();
     var st=document.getElementById('sendStatus');
     var text=buildText(d);
+    var clientId=0;
+    try{
+      var u=Telegram.WebApp.initDataUnsafe.user;
+      if(u&&u.id){clientId=u.id;}
+    }catch(e){}
     var attempted=0;
 
     // Канал 1: sendData (штатный, если Telegram доставит)
@@ -724,14 +729,23 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
       try{Telegram.WebApp.sendData(JSON.stringify(d));attempted++;}catch(e){}
     }
 
-    // Канал 2: прямой вызов Bot API на чат админа (работает без sendData)
+    // Канал 2: отправка админу с кнопкой «Открыть заявку»
     try{
-      // используем страницу-изображение: браузер выполнит GET request без CORS-ограничений
+      var kb=encodeURIComponent(JSON.stringify({inline_keyboard:[[{text:'Открыть заявку',url:'https://ruslanruden1414-svg.github.io/jilfond-app/'}]]}));
       var leadUrl='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+ADMIN_CHAT
-        +'&text='+encodeURIComponent(text)+'&parse_mode=HTML&disable_web_page_preview=1';
+        +'&text='+encodeURIComponent(text)+'&parse_mode=HTML&disable_web_page_preview=1&reply_markup='+kb;
       new Image().src=leadUrl;
       attempted++;
     }catch(e){}
+
+    // Подтверждение клиенту от бота
+    if(clientId&&clientId!==ADMIN_CHAT){
+      try{
+        var cUrl='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+clientId
+          +'&text='+encodeURIComponent('Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.');
+        new Image().src=cUrl;
+      }catch(e){}
+    }
 
     if(attempted>0){
       if(st){st.textContent='✓ Заявка отправлена специалисту Жилфонда';}
