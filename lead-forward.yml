@@ -34,7 +34,7 @@ jobs:
       - name: Forward new leads
         if: env.BOT_TOKEN != '' && env.ADMIN_CHAT != ''
         run: |
-          node - <<'EOF'
+          node --input-type=commonjs - <<'EOF'
           const fs = require('fs');
           const TOKEN = process.env.BOT_TOKEN;
           const ADMIN = process.env.ADMIN_CHAT;
