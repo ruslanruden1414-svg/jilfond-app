@@ -49,27 +49,18 @@ jobs:
             return res.json();
           }
 
-          // First run: remember the latest update so historical ones are not reprocessed
-          if (offset === 0) {
-            const r = await api('getUpdates', { limit: 1, offset: -1, timeout: 0 });
-            if (r.ok && r.result.length) {
-              offset = r.result[0].update_id;
-              fs.mkdirSync('data', { recursive: true });
-              fs.writeFileSync(OFFSET_FILE, String(offset));
-            }
-            process.exit(0);
+          function sendToAdmin(text) {
+            return api('sendMessage', { chat_id: ADMIN, text, parse_mode: 'HTML' });
+          }
+          function confirmToClient(chatId) {
+            return api('sendMessage', { chat_id: chatId, text: 'Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.' });
           }
 
-          const r = await api('getUpdates', { offset: offset + 1, timeout: 30 });
-          if (!r.ok) { console.error('getUpdates failed'); process.exit(0); }
-          let maxId = offset;
-          for (const u of r.result) {
-            if (u.update_id > maxId) maxId = u.update_id;
+          async function processUpdate(u) {
             const msg = u.message || u.channel_post;
-            if (!msg || !msg.web_app_data) continue;
+            if (!msg || !msg.web_app_data) return;
             let data;
-            try { data = JSON.parse(msg.web_app_data.data); } catch { continue; }
-            const chatId = msg.chat.id;
+            try { data = JSON.parse(msg.web_app_data.data); } catch { return; }
             const lines = [
               '🔔 <b>Новая заявка — подбор недвижимости</b>', '',
               '<b>Клиент:</b> ' + (data.fio || '—'),
@@ -86,13 +77,21 @@ jobs:
             lines.push('');
             if (data.user && data.user.trim()) lines.push('👤 <b>Telegram:</b> ' + data.user.trim());
             const text = lines.join('\n');
-            console.log('Lead:', text);
-
-            // To admin
-            try { await api('sendMessage', { chat_id: ADMIN, text, parse_mode: 'HTML' }); } catch (e) { console.error(e); }
-            // Confirmation to client
-            try { await api('sendMessage', { chat_id: chatId, text: 'Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.' }); } catch (e) {}
+            console.log('Lead forwarded:', data.fio || data.phone || data.type);
+            try { await sendToAdmin(text); } catch (e) { console.error('admin msg fail', e); }
+            try { await confirmToClient(msg.chat.id); } catch (e) { console.error('confirm fail', e); }
           }
+
+          // Fetch all pending updates from the current offset
+          const r = await api('getUpdates', { offset: offset + 1, timeout: 30, limit: 50 });
+          if (!r.ok) { console.error('API fail'); process.exit(0); }
+
+          let maxId = offset;
+          for (const u of r.result || []) {
+            if (u.update_id > maxId) maxId = u.update_id;
+            await processUpdate(u);
+          }
+
           if (maxId > offset) {
             fs.mkdirSync('data', { recursive: true });
             fs.writeFileSync(OFFSET_FILE, String(maxId));
