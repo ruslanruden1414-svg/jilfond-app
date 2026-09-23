@@ -28,12 +28,15 @@ jobs:
       - name: Set menu button
         if: env.BOT_TOKEN != '' && env.APP_URL != ''
         run: |
+          echo "--- getMe ---"
+          curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getMe"
+          echo ""
+          echo "--- getWebhookInfo ---"
+          curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getWebhookInfo"
+          echo ""
           echo "--- setChatMenuButton ---"
           curl -s "https://api.telegram.org/bot${BOT_TOKEN}/setChatMenuButton" \
             --data-urlencode 'menu_button={"type":"web_app","text":"Подбор недвижимости","web_app":{"url":"'"${APP_URL}"'"}}'
-          echo ""
-          echo "--- bot info ---"
-          curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getMe"
           echo ""
 
       - name: Forward new leads
@@ -54,10 +57,24 @@ jobs:
             return res.json();
           }
 
-          const r = await api('getUpdates', { offset: offset + 1, timeout: 30, limit: 50 });
-          console.log('getUpdates ok:', r.ok, 'count:', r.ok ? (r.result||[]).length : 0, 'offset used:', offset);
-          if (!r.ok) { console.error(JSON.stringify(r)); process.exit(0); }
+          console.log('=== OFFSET FILE: ' + (fs.existsSync(OFFSET_FILE) ? fs.readFileSync(OFFSET_FILE, 'utf8') : 'none') + ' ===');
 
+          console.log('=== DEBUG: all pending updates (offset ' + (offset+1) + ') ===');
+          const dbg = await api('getUpdates', { offset: offset + 1, timeout: 0, limit: 50 });
+          console.log('API ok:', !!dbg.ok, 'count:', dbg.ok ? (dbg.result||[]).length : 0);
+          if (dbg.ok) {
+            console.log('RAW:', JSON.stringify(dbg.result));
+            for (const u of dbg.result) {
+              console.log('UPDATE id=' + u.update_id + ' kind=' + Object.keys(u).join(','));
+              if (u.message) console.log('  from=' + (u.message.from ? u.message.from.id : '?') + ' text=' + (u.message.text||'') + ' has_web_app_data=' + (!!u.message.web_app_data));
+            }
+          } else {
+            console.log('DEBUG API error:', JSON.stringify(dbg));
+          }
+          console.log('=== END DEBUG ===');
+
+          const r = dbg;
+          if (!r.ok) { process.exit(0); }
           let maxId = offset;
           for (const u of r.result || []) {
             if (u.update_id > maxId) maxId = u.update_id;
@@ -81,8 +98,11 @@ jobs:
             lines.push('');
             if (data.user && data.user.trim()) lines.push('👤 <b>Telegram:</b> ' + data.user.trim());
             const text = lines.join('\n');
-            console.log('LEAD found:', data.fio || data.phone, '-> sending to admin');
-            try { await api('sendMessage', { chat_id: ADMIN, text, parse_mode: 'HTML' }); } catch (e) { console.error('admin fail', e); }
+            console.log('LEAD found:', data.fio || data.phone, '-> sending to admin', ADMIN);
+            try {
+              const sres = await api('sendMessage', { chat_id: ADMIN, text, parse_mode: 'HTML' });
+              console.log('  admin send ok:', sres.ok, 'desc:', sres.description || '');
+            } catch (e) { console.error('  admin fail', e); }
             try { await api('sendMessage', { chat_id: msg.chat.id, text: 'Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.' }); } catch (e) { console.error('confirm fail', e); }
           }
           if (maxId > offset) {
