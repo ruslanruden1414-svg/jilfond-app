@@ -34,8 +34,8 @@ jobs:
       - name: Forward new leads
         if: env.BOT_TOKEN != '' && env.ADMIN_CHAT != ''
         run: |
-          node --input-type=commonjs - <<'EOF'
-          const fs = require('fs');
+          node --input-type=module - <<'EOF'
+          import fs from 'fs';
           const TOKEN = process.env.BOT_TOKEN;
           const ADMIN = process.env.ADMIN_CHAT;
           const OFFSET_FILE = 'data/offset.txt';
