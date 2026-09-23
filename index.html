@@ -31,6 +31,7 @@ input[type=radio],input[type=checkbox]{position:absolute;opacity:0;pointer-event
 .cbadge{display:inline-block;font-size:13px;font-weight:700;color:var(--red);background:#fff0f0;border:1px solid #ffd9da;border-radius:20px;padding:6px 14px;margin:0 0 14px}
 h1{font-size:30px;line-height:1.1;margin:14px 0 10px;letter-spacing:-.5px}
 h2{font-size:26px;line-height:1.15;margin:18px 0 8px;letter-spacing:-.4px}
+h3{font-size:16px;line-height:1.3;margin:18px 0 8px;letter-spacing:-.2px}
 p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
 .option,.check{display:block;border:1px solid var(--line);border-radius:14px;padding:16px;margin:10px 0;background:#fff;font-size:16px;cursor:pointer}
 .option:hover,.check:hover,.card:hover{border-color:#f08a8e}
@@ -52,6 +53,7 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
 .note{font-size:13px;color:#8b97a4;margin-top:-6px}
 .check .ck{display:inline-grid;place-items:center;width:22px;height:22px;border:2px solid #c9d2dd;border-radius:6px;margin-right:12px;color:#fff;font-size:14px;vertical-align:-5px;transition:all .15s ease}
 .check.selected .ck{background:var(--red);border-color:var(--red)}
+.fio{display:flex;gap:10px}
 </style>
 </head>
 <body>
@@ -59,22 +61,43 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
 <section class="screen s0" id="s0">
   <div class="hero">
     <img src="hero.png" alt="Жилфонд — подбор недвижимости">
-    <div class="hi"><div><b>Подбор недвижимости</b><span>Ответьте на 4 вопроса — подберём варианты под вас</span></div></div>
-    <label class="heroBtn" data-go="s1" aria-label="Начать подбор">Начать подбор →</label>
+    <div class="hi"><div><b>Подбор недвижимости</b><span>Заполните анкету за 2 минуты — подберём варианты под вас</span></div></div>
+    <label class="heroBtn" data-go="contact" aria-label="Начать подбор">Начать подбор →</label>
   </div>
 </section>
 
-<section class="screen s1" id="s1">
+<section class="screen s1" id="contact">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt"></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <h2>Как к вам обращаться?</h2>
+  <p>Укажите данные, чтобы специалист Жилфонда мог связаться с вами.</p>
+  <div class="fio">
+    <input class="input" id="fFam" placeholder="Фамилия">
+    <input class="input" id="fName" placeholder="Имя">
+    <input class="input" id="fOt" placeholder="Отчество">
+  </div>
+  <input class="input" id="fPhone" type="tel" placeholder="Номер телефона, например +7 900 000-00-00">
+  <p class="note">Телефон нужен, чтобы мы могли прислать вам подходящие варианты.</p>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s1" id="type">
   <div class="steps"><span class="step-txt" data-step></span><span class="step-txt"></span></div>
   <div class="progress"><i></i></div>
   <label class="back" data-back>← Назад</label>
   <h2>Что вы хотите приобрести?</h2>
   <p>Выберите объект, который сейчас вас интересует.</p>
   <label class="option" data-type="flat"><input type="radio" name="type" value="flat"><span class="ic">🏢</span>Квартиру</label>
+  <label class="option" data-type="studio"><input type="radio" name="type" value="studio"><span class="ic">🛋</span>Студию</label>
+  <label class="option" data-type="room"><input type="radio" name="type" value="room"><span class="ic">🛏</span>Комнату</label>
   <label class="option" data-type="house"><input type="radio" name="type" value="house"><span class="ic">🏠</span>Дом</label>
+  <label class="option" data-type="townhouse"><input type="radio" name="type" value="townhouse"><span class="ic">🏘</span>Таунхаус</label>
   <label class="option" data-type="land"><input type="radio" name="type" value="land"><span class="ic">🌳</span>Земельный участок</label>
   <label class="option" data-type="commercial"><input type="radio" name="type" value="commercial"><span class="ic">🏬</span>Коммерческую недвижимость</label>
-  <label class="option" data-type="room"><input type="radio" name="type" value="room"><span class="ic">🛏</span>Комнату</label>
+  <label class="option" data-type="apartment"><input type="radio" name="type" value="apartment"><span class="ic">🏨</span>Апартаменты</label>
+  <label class="option" data-type="garage"><input type="radio" name="type" value="garage"><span class="ic">🚗</span>Гараж / машиноместо</label>
+  <label class="option" data-type="warehouse"><input type="radio" name="type" value="warehouse"><span class="ic">📦</span>Склад / производство</label>
   <label class="btnLabel" data-next>Продолжить →</label>
 </section>
 
@@ -84,12 +107,12 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
   <label class="back" data-back>← Назад</label>
   <div class="cbadge" data-badge></div>
   <h2>Ваш бюджет</h2>
-  <p>Укажите, сколько готовы потратить на покупку.</p>
+  <p>Укажите, сколько готовы потратить.</p>
   <div class="chips">
-    <label class="chip" data-budget="до 5 млн">До 5 млн ₽</label>
-    <label class="chip" data-budget="5–10 млн">5–10 млн ₽</label>
-    <label class="chip" data-budget="10–20 млн">10–20 млн ₽</label>
-    <label class="chip" data-budget="свыше 20 млн">Свыше 20 млн ₽</label>
+    <label class="chip" data-q="Бюджет" data-v="До 5 млн ₽">До 5 млн ₽</label>
+    <label class="chip" data-q="Бюджет" data-v="5–10 млн ₽">5–10 млн ₽</label>
+    <label class="chip" data-q="Бюджет" data-v="10–20 млн ₽">10–20 млн ₽</label>
+    <label class="chip" data-q="Бюджет" data-v="Свыше 20 млн ₽">Свыше 20 млн ₽</label>
   </div>
   <input class="input" id="budgetInput" placeholder="Или введите свою сумму, например 8 500 000 ₽">
   <p class="note">Если планируете ипотеку, мы отдельно учтём первоначальный взнос и комфортный ежемесячный платёж.</p>
@@ -108,6 +131,260 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
     <label class="card" data-format="Евро-2">🛋<b>Евро-2</b></label>
     <label class="card" data-format="2-комнатная">🛏🛏<b>2-комнатная</b></label>
     <label class="card" data-format="Евро-3">🛋🛏<b>Евро-3</b></label>
+    <label class="card" data-format="3-комнатная">🛏🛏🛏<b>3-комнатная</b></label>
+    <label class="card" data-format="4+ комнат">🏠<b>4+ комнат</b></label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s3" id="format-studio">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Планировка студии</h2>
+  <p>Выберите подходящий вариант.</p>
+  <div class="grid">
+    <label class="card" data-format="Студия 18–25 м²">🛋<b>Студия 18–25 м²</b></label>
+    <label class="card" data-format="Студия 25–32 м²">🛋<b>Студия 25–32 м²</b></label>
+    <label class="card" data-format="Евро-студия">🛏<b>Евро-студия</b></label>
+    <label class="card" data-format="Свободная планировка">🛠<b>Свободная</b></label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s3" id="format-apartment">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Формат апартаментов</h2>
+  <p>Выберите подходящий вариант.</p>
+  <div class="grid">
+    <label class="card" data-format="1-комн. апартаменты">🛏<b>1-комнатная</b></label>
+    <label class="card" data-format="2-комн. апартаменты">🛏🛏<b>2-комнатная</b></label>
+    <label class="card" data-format="3-комн. апартаменты">🛏🛏🛏<b>3-комнатная</b></label>
+    <label class="card" data-format="Пентхаус">💎<b>Пентхаус</b></label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="spec-flat">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Уточним детали</h2>
+  <p>Поможет точнее подобрать варианты.</p>
+  <h3>Тип дома</h3>
+  <div class="chips">
+    <label class="chip" data-q="Тип дома" data-v="Новостройка">Новостройка</label>
+    <label class="chip" data-q="Тип дома" data-v="Вторичка">Вторичка</label>
+    <label class="chip" data-q="Тип дома" data-v="Не важно">Не важно</label>
+  </div>
+  <h3>Срок переезда</h3>
+  <div class="chips">
+    <label class="chip" data-q="Срок переезда" data-v="Сразу">Сразу</label>
+    <label class="chip" data-q="Срок переезда" data-v="1–3 месяца">1–3 месяца</label>
+    <label class="chip" data-q="Срок переезда" data-v="3–6 месяцев">3–6 месяцев</label>
+    <label class="chip" data-q="Срок переезда" data-v="Не горит">Не горит</label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="spec-studio">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Уточним детали</h2>
+  <p>Поможет точнее подобрать варианты.</p>
+  <h3>Тип дома</h3>
+  <div class="chips">
+    <label class="chip" data-q="Тип дома" data-v="Новостройка">Новостройка</label>
+    <label class="chip" data-q="Тип дома" data-v="Вторичка">Вторичка</label>
+    <label class="chip" data-q="Тип дома" data-v="Не важно">Не важно</label>
+  </div>
+  <h3>Для кого</h3>
+  <div class="chips">
+    <label class="chip" data-q="Для кого" data-v="Себе">Себе</label>
+    <label class="chip" data-q="Для кого" data-v="В аренду">В аренду</label>
+    <label class="chip" data-q="Для кого" data-v="Для ребёнка">Для ребёнка</label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="spec-room">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Уточним детали</h2>
+  <p>Поможет точнее подобрать варианты.</p>
+  <h3>Где комната</h3>
+  <div class="chips">
+    <label class="chip" data-q="Где комната" data-v="В квартире">В квартире</label>
+    <label class="chip" data-q="Где комната" data-v="В общежитии">В общежитии</label>
+    <label class="chip" data-q="Где комната" data-v="Комната-студия">Комната-студия</label>
+  </div>
+  <h3>Санузел</h3>
+  <div class="chips">
+    <label class="chip" data-q="Санузел" data-v="Отдельный санузел">Отдельный санузел</label>
+    <label class="chip" data-q="Санузел" data-v="Санузел в квартире">Санузел в квартире</label>
+    <label class="chip" data-q="Санузел" data-v="С балконом">С балконом</label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="spec-house">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Уточним детали</h2>
+  <p>Поможет точнее подобрать варианты.</p>
+  <h3>Тип дома</h3>
+  <div class="chips">
+    <label class="chip" data-q="Тип дома" data-v="Коттедж">Коттедж</label>
+    <label class="chip" data-q="Тип дома" data-v="Дача">Дача</label>
+    <label class="chip" data-q="Тип дома" data-v="Дом для ПМЖ">Дом для ПМЖ</label>
+  </div>
+  <h3>Площадь дома</h3>
+  <div class="chips">
+    <label class="chip" data-q="Площадь дома" data-v="До 100 м²">До 100 м²</label>
+    <label class="chip" data-q="Площадь дома" data-v="100–150 м²">100–150 м²</label>
+    <label class="chip" data-q="Площадь дома" data-v="150 м² и более">150 м² и более</label>
+  </div>
+  <h3>Участок</h3>
+  <div class="chips">
+    <label class="chip" data-q="Участок" data-v="До 6 соток">До 6 соток</label>
+    <label class="chip" data-q="Участок" data-v="6–10 соток">6–10 соток</label>
+    <label class="chip" data-q="Участок" data-v="10+ соток">10+ соток</label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="spec-townhouse">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Уточним детали</h2>
+  <p>Поможет точнее подобрать варианты.</p>
+  <h3>Площадь</h3>
+  <div class="chips">
+    <label class="chip" data-q="Площадь таунхауса" data-v="До 80 м²">До 80 м²</label>
+    <label class="chip" data-q="Площадь таунхауса" data-v="80–120 м²">80–120 м²</label>
+    <label class="chip" data-q="Площадь таунхауса" data-v="120 м² и более">120 м² и более</label>
+  </div>
+  <h3>Двор</h3>
+  <div class="chips">
+    <label class="chip" data-q="Двор" data-v="Свой дворик">Свой дворик</label>
+    <label class="chip" data-q="Двор" data-v="Общий двор">Общий двор</label>
+    <label class="chip" data-q="Двор" data-v="Без двора">Без двора</label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="spec-land">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Уточним детали</h2>
+  <p>Поможет точнее подобрать варианты.</p>
+  <h3>Назначение</h3>
+  <div class="chips">
+    <label class="chip" data-q="Назначение участка" data-v="ИЖС">ИЖС</label>
+    <label class="chip" data-q="Назначение участка" data-v="СНТ">СНТ</label>
+    <label class="chip" data-q="Назначение участка" data-v="ЛПХ">ЛПХ</label>
+  </div>
+  <h3>Площадь</h3>
+  <div class="chips">
+    <label class="chip" data-q="Площадь участка" data-v="До 6 соток">До 6 соток</label>
+    <label class="chip" data-q="Площадь участка" data-v="6–10 соток">6–10 соток</label>
+    <label class="chip" data-q="Площадь участка" data-v="10–20 соток">10–20 соток</label>
+    <label class="chip" data-q="Площадь участка" data-v="20+ соток">20+ соток</label>
+  </div>
+  <h3>Коммуникации</h3>
+  <div class="chips">
+    <label class="chip" data-q="Коммуникации" data-v="Свет">Свет</label>
+    <label class="chip" data-q="Коммуникации" data-v="Вода">Вода</label>
+    <label class="chip" data-q="Коммуникации" data-v="Газ">Газ</label>
+    <label class="chip" data-q="Коммуникации" data-v="Без коммуникаций">Без коммуникаций</label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="spec-commercial">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Уточним детали</h2>
+  <p>Поможет точнее подобрать варианты.</p>
+  <h3>Назначение</h3>
+  <div class="chips">
+    <label class="chip" data-q="Назначение" data-v="Офис">Офис</label>
+    <label class="chip" data-q="Назначение" data-v="Торговое помещение">Торговое помещение</label>
+    <label class="chip" data-q="Назначение" data-v="Свободное">Свободное</label>
+    <label class="chip" data-q="Назначение" data-v="Кафе / сервис">Кафе / сервис</label>
+  </div>
+  <h3>Площадь</h3>
+  <div class="chips">
+    <label class="chip" data-q="Площадь" data-v="До 50 м²">До 50 м²</label>
+    <label class="chip" data-q="Площадь" data-v="50–150 м²">50–150 м²</label>
+    <label class="chip" data-q="Площадь" data-v="150 м² и более">150 м² и более</label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="spec-garage">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Уточним детали</h2>
+  <p>Поможет точнее подобрать варианты.</p>
+  <h3>Тип</h3>
+  <div class="chips">
+    <label class="chip" data-q="Тип" data-v="Гараж">Гараж</label>
+    <label class="chip" data-q="Тип" data-v="Машиноместо в паркинге">Машиноместо в паркинге</label>
+    <label class="chip" data-q="Тип" data-v="Тёплый гараж">Тёплый гараж</label>
+  </div>
+  <h3>Размер машины</h3>
+  <div class="chips">
+    <label class="chip" data-q="Размер машины" data-v="Легковой автомобиль">Легковой</label>
+    <label class="chip" data-q="Размер машины" data-v="Паркетник / кроссовер">Паркетник / кроссовер</label>
+    <label class="chip" data-q="Размер машины" data-v="Универсал">Универсал</label>
+  </div>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="spec-warehouse">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Уточним детали</h2>
+  <p>Поможет точнее подобрать варианты.</p>
+  <h3>Тип</h3>
+  <div class="chips">
+    <label class="chip" data-q="Тип помещения" data-v="Склад">Склад</label>
+    <label class="chip" data-q="Тип помещения" data-v="Производственное">Производственное</label>
+    <label class="chip" data-q="Тип помещения" data-v="Холодное хранение">Холодное хранение</label>
+  </div>
+  <h3>Высота потолков</h3>
+  <div class="chips">
+    <label class="chip" data-q="Высота потолков" data-v="До 4 м">До 4 м</label>
+    <label class="chip" data-q="Высота потолков" data-v="4–6 м">4–6 м</label>
+    <label class="chip" data-q="Высота потолков" data-v="6 м и более">6 м и более</label>
+  </div>
+  <h3>Площадь</h3>
+  <div class="chips">
+    <label class="chip" data-q="Площадь" data-v="До 200 м²">До 200 м²</label>
+    <label class="chip" data-q="Площадь" data-v="200–500 м²">200–500 м²</label>
+    <label class="chip" data-q="Площадь" data-v="500 м² и более">500 м² и более</label>
   </div>
   <label class="btnLabel" data-next>Продолжить →</label>
 </section>
@@ -118,42 +395,29 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
   <label class="back" data-back>← Назад</label>
   <div class="cbadge" data-badge></div>
   <h2>Что для вас важно?</h2>
-  <p>Можно выбрать несколько пунктов.</p>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
   <label class="check"><span class="ck">✓</span>Не первый этаж</label>
   <label class="check"><span class="ck">✓</span>Не последний этаж</label>
   <label class="check"><span class="ck">✓</span>Балкон / лоджия</label>
   <label class="check"><span class="ck">✓</span>Паркинг</label>
   <label class="check"><span class="ck">✓</span>Кухня-гостиная</label>
   <label class="check"><span class="ck">✓</span>Гардеробная</label>
+  <label class="check"><span class="ck">✓</span>Окна во двор</label>
   <label class="btnLabel" data-next>Продолжить →</label>
 </section>
 
-<section class="screen s4" id="crit-house">
+<section class="screen s4" id="crit-studio">
   <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
   <div class="progress"><i></i></div>
   <label class="back" data-back>← Назад</label>
   <div class="cbadge" data-badge></div>
   <h2>Что для вас важно?</h2>
-  <p>Можно выбрать несколько пунктов.</p>
-  <label class="check"><span class="ck">✓</span>Отдельная кухня</label>
-  <label class="check"><span class="ck">✓</span>Санузел</label>
-  <label class="check"><span class="ck">✓</span>Гараж</label>
-  <label class="check"><span class="ck">✓</span>Участок</label>
-  <label class="btnLabel" data-next>Продолжить →</label>
-</section>
-
-<section class="screen s4" id="crit-commercial">
-  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
-  <div class="progress"><i></i></div>
-  <label class="back" data-back>← Назад</label>
-  <div class="cbadge" data-badge></div>
-  <h2>Что для вас важно?</h2>
-  <p>Можно выбрать несколько пунктов.</p>
-  <label class="check"><span class="ck">✓</span>Витрина</label>
-  <label class="check"><span class="ck">✓</span>Отдельный вход</label>
-  <label class="check"><span class="ck">✓</span>Парковка</label>
-  <label class="check"><span class="ck">✓</span>Высокие потолки</label>
-  <label class="check"><span class="ck">✓</span>Первая линия</label>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
+  <label class="check"><span class="ck">✓</span>Не первый этаж</label>
+  <label class="check"><span class="ck">✓</span>Не последний этаж</label>
+  <label class="check"><span class="ck">✓</span>Балкон / лоджия</label>
+  <label class="check"><span class="ck">✓</span>Кухня-гостиная</label>
+  <label class="check"><span class="ck">✓</span>Окна во двор</label>
   <label class="btnLabel" data-next>Продолжить →</label>
 </section>
 
@@ -163,12 +427,118 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
   <label class="back" data-back>← Назад</label>
   <div class="cbadge" data-badge></div>
   <h2>Что для вас важно?</h2>
-  <p>Можно выбрать несколько пунктов.</p>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
   <label class="check"><span class="ck">✓</span>Не первый этаж</label>
   <label class="check"><span class="ck">✓</span>Балкон / лоджия</label>
   <label class="check"><span class="ck">✓</span>Окна во двор</label>
   <label class="check"><span class="ck">✓</span>Мебель</label>
   <label class="check"><span class="ck">✓</span>Возможна регистрация</label>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="crit-house">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Что для вас важно?</h2>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
+  <label class="check"><span class="ck">✓</span>Отдельная кухня</label>
+  <label class="check"><span class="ck">✓</span>Санузел</label>
+  <label class="check"><span class="ck">✓</span>Гараж</label>
+  <label class="check"><span class="ck">✓</span>Участок</label>
+  <label class="check"><span class="ck">✓</span>Терраса</label>
+  <label class="check"><span class="ck">✓</span>Камин</label>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="crit-townhouse">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Что для вас важно?</h2>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
+  <label class="check"><span class="ck">✓</span>Гараж</label>
+  <label class="check"><span class="ck">✓</span>Терраса</label>
+  <label class="check"><span class="ck">✓</span>Первый этаж</label>
+  <label class="check"><span class="ck">✓</span>Второй этаж</label>
+  <label class="check"><span class="ck">✓</span>Без соседей по стене</label>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="crit-land">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Что для вас важно?</h2>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
+  <label class="check"><span class="ck">✓</span>Угловой участок</label>
+  <label class="check"><span class="ck">✓</span>Ровный рельеф</label>
+  <label class="check"><span class="ck">✓</span>В границах посёлка</label>
+  <label class="check"><span class="ck">✓</span>Рядом лес</label>
+  <label class="check"><span class="ck">✓</span>У воды</label>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="crit-commercial">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Что для вас важно?</h2>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
+  <label class="check"><span class="ck">✓</span>Витрина</label>
+  <label class="check"><span class="ck">✓</span>Отдельный вход</label>
+  <label class="check"><span class="ck">✓</span>Парковка</label>
+  <label class="check"><span class="ck">✓</span>Высокие потолки</label>
+  <label class="check"><span class="ck">✓</span>Первая линия</label>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="crit-apartment">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Что для вас важно?</h2>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
+  <label class="check"><span class="ck">✓</span>Не первый этаж</label>
+  <label class="check"><span class="ck">✓</span>Балкон / терраса</label>
+  <label class="check"><span class="ck">✓</span>Паркинг</label>
+  <label class="check"><span class="ck">✓</span>Консьерж</label>
+  <label class="check"><span class="ck">✓</span>Бассейн в комплексе</label>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="crit-garage">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Что для вас важно?</h2>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
+  <label class="check"><span class="ck">✓</span>Охрана</label>
+  <label class="check"><span class="ck">✓</span>Видеонаблюдение</label>
+  <label class="check"><span class="ck">✓</span>Подземный паркинг</label>
+  <label class="check"><span class="ck">✓</span>Рядом с домом</label>
+  <label class="check"><span class="ck">✓</span>Электричество</label>
+  <label class="btnLabel" data-next>Продолжить →</label>
+</section>
+
+<section class="screen s4" id="crit-warehouse">
+  <div class="steps"><span class="step-txt" data-step></span><span class="step-txt" data-type-label></span></div>
+  <div class="progress"><i></i></div>
+  <label class="back" data-back>← Назад</label>
+  <div class="cbadge" data-badge></div>
+  <h2>Что для вас важно?</h2>
+  <p>Можно выбрать несколько пунктов (необязательно).</p>
+  <label class="check"><span class="ck">✓</span>Пандус</label>
+  <label class="check"><span class="ck">✓</span>Ворота от 4 м</label>
+  <label class="check"><span class="ck">✓</span>Электричество</label>
+  <label class="check"><span class="ck">✓</span>Офисные помещения</label>
+  <label class="check"><span class="ck">✓</span>Подъезд для фур</label>
   <label class="btnLabel" data-next>Продолжить →</label>
 </section>
 
@@ -202,11 +572,9 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
 (function(){
   if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}
 
-  var ADMIN_CHAT=0;          // ← сюда впишете ваш numeric ID из @userinfobot
-
-  var FLOW={flat:['budget','format','crit-flat','req','done'],house:['budget','crit-house','req','done'],land:['budget','req','done'],commercial:['budget','crit-commercial','req','done'],room:['budget','crit-room','req','done']};
-  var NAMES={flat:'Квартира',house:'Дом',land:'Земельный участок',commercial:'Коммерческая недвижимость',room:'Комната'};
-  var ICONS={flat:'🏢',house:'🏠',land:'🌳',commercial:'🏬',room:'🛏'};
+  var FLOW={flat:['budget','format','spec-flat','crit-flat','req','done'],studio:['budget','format-studio','spec-studio','crit-studio','req','done'],room:['budget','spec-room','crit-room','req','done'],house:['budget','spec-house','crit-house','req','done'],townhouse:['budget','spec-townhouse','crit-townhouse','req','done'],land:['budget','spec-land','crit-land','req','done'],commercial:['budget','spec-commercial','crit-commercial','req','done'],apartment:['budget','format-apartment','crit-apartment','req','done'],garage:['budget','spec-garage','crit-garage','req','done'],warehouse:['budget','spec-warehouse','crit-warehouse','req','done']};
+  var NAMES={flat:'Квартира',studio:'Студия',room:'Комната',house:'Дом',townhouse:'Таунхаус',land:'Земельный участок',commercial:'Коммерческая недвижимость',apartment:'Апартаменты',garage:'Гараж / машиноместо',warehouse:'Склад / производство'};
+  var ICONS={flat:'🏢',studio:'🛋',room:'🛏',house:'🏠',townhouse:'🏘',land:'🌳',commercial:'🏬',apartment:'🏨',garage:'🚗',warehouse:'📦'};
   var type='',cur='s0',sent=false;
 
   function show(id){
@@ -217,30 +585,33 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
     if(id==='done'&&!sent){sent=true;sendLead();}
   }
   function refresh(id){
-    var s=document.getElementById(id);
     if(id==='s0'){return;}
+    var s=document.getElementById(id);
     var bar=s.querySelector('.progress i');
     if(bar){bar.style.width=progress(id)+'%';}
     var stepEl=s.querySelector('[data-step]');
-    var steps=type?['s1'].concat(FLOW[type]):['s1'];
+    var steps=type?['contact','type'].concat(FLOW[type]):['contact','type'];
     var idx=steps.indexOf(id);
     if(stepEl&&idx>=0){stepEl.textContent='Шаг '+(idx+1)+' из '+steps.length;}
     var badge=s.querySelector('[data-badge]');
-    if(badge){badge.textContent=type?ICONS[type]+' '+NAMES[type]:'';badge.style.display=type&&idx>1?'inline-block':'none';}
+    if(badge){badge.textContent=type?ICONS[type]+' '+NAMES[type]:'';badge.style.display=type&&idx>2?'inline-block':'none';}
     setReady(s);
   }
   function progress(id){
-    if(id==='s1'){return 8;}
+    if(id==='contact'){return 5;}
+    if(id==='type'){return 10;}
     var steps=FLOW[type],i=steps?steps.indexOf(id):-1;
-    if(!steps||i<0){return 25;}
+    if(!steps||i<0){return 20;}
     if(steps.length<2){return 100;}
-    return Math.round(i/(steps.length-1)*100);
+    return Math.round((10+i/(steps.length-1)*85));
   }
   function valid(id){
-    if(id==='s1'){return !!type;}
-    var s=document.getElementById(id);
-    if(id==='format'){return !!s.querySelector('.card.selected');}
-    if(id.indexOf('crit-')===0){return !!s.querySelector('.check.selected');}
+    if(id==='contact'){
+      var ph=(document.getElementById('fPhone').value||'').replace(/\D/g,'');
+      return ph.length>=10;
+    }
+    if(id==='type'){return !!type;}
+    if(id==='format'||id==='format-studio'||id==='format-apartment'){return !!document.getElementById(id).querySelector('.card.selected');}
     return true;
   }
   function setReady(s){
@@ -249,39 +620,64 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
   }
   function next(){
     if(!valid(cur)){return;}
-    if(cur==='s1'){show(FLOW[type][0]);return;}
-    var steps=FLOW[type],i=steps.indexOf(cur);
+    var steps=type?['contact','type'].concat(FLOW[type]):['contact','type'];
+    var i=steps.indexOf(cur);
+    if(cur==='type'&&type){show(FLOW[type][0]);return;}
     if(i>=0&&i<steps.length-1){show(steps[i+1]);}
   }
   function back(){
-    if(cur==='s1'){show('s0');return;}
-    var steps=FLOW[type],i=steps.indexOf(cur);
-    if(i>0){show(steps[i-1]);}else if(i===0){show('s1');}
+    var steps=type?['contact','type'].concat(FLOW[type]):['contact','type'];
+    var i=steps.indexOf(cur);
+    if(cur==='contact'){show('s0');return;}
+    if(i>0){show(steps[i-1]);}
   }
   function reset(){
     var sels=document.querySelectorAll('.option.selected,.card.selected,.check.selected,.chip.selected');
     for(var i=0;i<sels.length;i++){sels[i].classList.remove('selected');}
     var radios=document.querySelectorAll('input[name=type]');
     for(var j=0;j<radios.length;j++){radios[j].checked=false;}
-    var bi=document.getElementById('budgetInput');if(bi)bi.value='';
+    ['fFam','fName','fOt','fPhone','budgetInput'].forEach(function(x){
+      var e=document.getElementById(x);if(e)e.value='';
+    });
+    var inputs=document.querySelectorAll('#req .input');
+    for(var k=0;k<inputs.length;k++){inputs[k].value='';}
     type='';sent=false;
     var st=document.getElementById('sendStatus');if(st)st.textContent='';
   }
 
   function collect(){
     var d={};
+    var fam=document.getElementById('fFam').value.trim();
+    var nm=document.getElementById('fName').value.trim();
+    var ot=document.getElementById('fOt').value.trim();
+    d.fio=[fam,nm,ot].filter(Boolean).join(' ');
+    d.phone=document.getElementById('fPhone').value.trim();
     d.type=type?NAMES[type]:'';
-    var chip=document.querySelector('.chip.selected');
-    d.budget=chip?chip.getAttribute('data-budget'):(document.getElementById('budgetInput').value.trim()||'не указан');
-    var card=document.querySelector('.card.selected');
-    d.format=card?card.getAttribute('data-format'):'';
+    d.budget='';
+    var bc=document.querySelector('#budget .chip.selected');
+    if(bc){d.budget=bc.getAttribute('data-v');
+      var bi2=document.getElementById('budgetInput');
+      if(bi2.value.trim()&&bi2.value.trim()!==bc.textContent.trim()){d.budget+=' ('+bi2.value.trim()+')';}
+    }else{
+      var bi=document.getElementById('budgetInput');
+      if(bi.value.trim()){d.budget=bi.value.trim();}else{d.budget='не указан';}
+    }
+    var fmt=document.querySelector('#format .card.selected,#format-studio .card.selected,#format-apartment .card.selected');
+    d.format=fmt?fmt.getAttribute('data-format'):'';
+    var extra=[];
+    var chips=document.querySelectorAll('.chip.selected');
+    for(var i=0;i<chips.length;i++){
+      var c=chips[i];
+      if(!c.closest('#budget')){extra.push((c.getAttribute('data-q')||'Параметр')+': '+c.getAttribute('data-v'));}
+    }
+    d.details=extra;
     var crits=[];
     var checks=document.querySelectorAll('.check.selected');
-    for(var i=0;i<checks.length;i++){crits.push(checks[i].textContent.replace(/\u2713/g,'').trim());}
+    for(var j=0;j<checks.length;j++){crits.push(checks[j].textContent.replace(/\u2713/g,'').trim());}
     d.criteria=crits;
     var req=document.querySelectorAll('#req .input');
     var r=[];
-    if(req.length>=3){for(var k=0;k<3;k++){if(req[k].value.trim())r.push(req[k].value.trim());}}
+    if(req.length>=3){for(var m=0;m<3;m++){if(req[m].value.trim())r.push(req[m].value.trim());}}
     d.requirements=r;
     if(req.length>=4&&req[3].value.trim()){d.reject=req[3].value.trim();}else{d.reject='';}
     d.user='';
@@ -289,15 +685,19 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
     return d;
   }
   function buildText(d){
-    var lines=['🔔 <b>Новая заявка — подбор</b>',''];
+    var lines=['🔔 <b>Новая заявка — подбор недвижимости</b>',''];
+    lines.push('<b>Клиент:</b> '+(d.fio||'—'));
+    if(d.phone){lines.push('<b>Телефон:</b> '+d.phone);}
+    lines.push('');
     lines.push('<b>Тип:</b> '+(ICONS[type]||'')+' '+d.type);
     lines.push('<b>Бюджет:</b> '+d.budget);
     if(d.format){lines.push('<b>Формат:</b> '+d.format);}
+    if(d.details.length){lines.push('<b>Детали:</b> '+d.details.join('; '));}
     if(d.criteria.length){lines.push('<b>Важно:</b> '+d.criteria.join(', '));}
     if(d.requirements.length){lines.push('<b>Требования:</b> '+d.requirements.join('; '));}
     if(d.reject){lines.push('<b>Не подходит:</b> '+d.reject);}
     lines.push('');
-    if(d.user){lines.push('👤 <b>Клиент:</b> '+d.user);}
+    if(d.user){lines.push('👤 <b>Telegram:</b> '+d.user.trim());}
     return lines.join('\n');
   }
   function sendLead(){
@@ -326,21 +726,21 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
       type=opt.getAttribute('data-type');
       var opts=document.querySelectorAll('.option[data-type]');
       for(var i=0;i<opts.length;i++){opts[i].classList.toggle('selected',opts[i]===opt);}
-      setReady(document.getElementById('s1'));
+      setReady(document.getElementById('type'));
       return;
     }
     var chip=el.closest('.chip');
     if(chip){
-      var chips=chip.parentElement.querySelectorAll('.chip');
+      var grp=chip.parentElement;
+      var chips=grp.querySelectorAll('.chip');
       for(var j=0;j<chips.length;j++){chips[j].classList.toggle('selected',chips[j]===chip);}
       var bi=document.getElementById('budgetInput');
-      if(bi){bi.value=chip.getAttribute('data-budget');}
+      if(bi&&grp.closest('#budget')){bi.value=chip.getAttribute('data-v');}
       return;
     }
     var chk=el.closest('.check');
     if(chk){
       chk.classList.toggle('selected');
-      setReady(chk.closest('.screen'));
       return;
     }
     var card=el.closest('.card');
@@ -351,11 +751,15 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
       return;
     }
   });
-  var bi2=document.getElementById('budgetInput');
-  if(bi2){bi2.addEventListener('input',function(){
+  var bi=document.getElementById('budgetInput');
+  if(bi){bi.addEventListener('input',function(){
     var chips=document.querySelectorAll('#budget .chip');
     for(var i=0;i<chips.length;i++){chips[i].classList.remove('selected');}
   });}
+  ['fPhone','fFam','fName','fOt'].forEach(function(x){
+    var e=document.getElementById(x);
+    if(e){e.addEventListener('input',function(){setReady(document.getElementById('contact'));});}
+  });
   show('s0');
 })();
 </script>
