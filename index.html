@@ -2,6 +2,9 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Жилфонд — подбор недвижимости</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -731,11 +734,10 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
 
     // Канал 2: отправка админу — форма POST (простой запрос, без лимита длины)
     function post(url,obj){
-      var body='';
-      for(var k in obj){ if(obj[k]===undefined||obj[k]===null) continue; body+=encodeURIComponent(k)+'='+encodeURIComponent(obj[k])+'&'; }
-      body=body.slice(0,-1);
-      if(window.fetch){ fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body}); }
-      else{ var u2=url+'?'+body; new Image().src=u2; }
+      var body=new URLSearchParams();
+      for(var k in obj){ if(obj[k]===undefined||obj[k]===null) continue; body.append(k,obj[k]); }
+      if(window.fetch){ fetch(url,{method:'POST',mode:'no-cors',body:body}); }
+      else{ new Image().src=url+'?'+body.toString(); }
     }
     try{
       post('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{chat_id:ADMIN_CHAT,text:text,parse_mode:'HTML',disable_web_page_preview:1});
