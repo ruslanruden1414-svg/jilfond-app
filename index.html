@@ -729,21 +729,29 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
       try{Telegram.WebApp.sendData(JSON.stringify(d));attempted++;}catch(e){}
     }
 
-    // Канал 2: отправка админу с кнопкой «Открыть заявку»
-    try{
-      var kb=encodeURIComponent(JSON.stringify({inline_keyboard:[[{text:'Открыть заявку',url:'https://ruslanruden1414-svg.github.io/jilfond-app/'}]]}));
-      var leadUrl='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+ADMIN_CHAT
-        +'&text='+encodeURIComponent(text)+'&parse_mode=HTML&disable_web_page_preview=1&reply_markup='+kb;
-      new Image().src=leadUrl;
-      attempted++;
-    }catch(e){}
+    // Канал 2: отправка админу через Bot API (POST, без ограничений длины)
+    var kb={inline_keyboard:[[{text:'Открыть заявку',url:'https://ruslanruden1414-svg.github.io/jilfond-app/'}]]};
+    var payload=JSON.stringify({chat_id:ADMIN_CHAT,text:text,parse_mode:'HTML',disable_web_page_preview:true,reply_markup:kb});
+    if(window.fetch){
+      try{
+        fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:payload});
+        attempted++;
+      }catch(e){
+        try{new Image().src='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+ADMIN_CHAT+'&text='+encodeURIComponent(text)+'&parse_mode=HTML';attempted++;}catch(e2){}
+      }
+    }else{
+      try{new Image().src='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+ADMIN_CHAT+'&text='+encodeURIComponent(text)+'&parse_mode=HTML';attempted++;}catch(e){}
+    }
 
     // Подтверждение клиенту от бота
     if(clientId&&clientId!==ADMIN_CHAT){
       try{
-        var cUrl='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+clientId
-          +'&text='+encodeURIComponent('Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.');
-        new Image().src=cUrl;
+        var cPayload=JSON.stringify({chat_id:clientId,text:'Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.'});
+        if(window.fetch){
+          fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:cPayload});
+        }else{
+          new Image().src='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+clientId+'&text='+encodeURIComponent('Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.');
+        }
       }catch(e){}
     }
 
