@@ -729,19 +729,23 @@ p{font-size:16px;line-height:1.5;color:#66768a;margin:0 0 12px}
       try{Telegram.WebApp.sendData(JSON.stringify(d));attempted++;}catch(e){}
     }
 
-    // Канал 2: отправка админу через GET (надёжный, проверенный)
+    // Канал 2: отправка админу — форма POST (простой запрос, без лимита длины)
+    function post(url,obj){
+      var body='';
+      for(var k in obj){ if(obj[k]===undefined||obj[k]===null) continue; body+=encodeURIComponent(k)+'='+encodeURIComponent(obj[k])+'&'; }
+      body=body.slice(0,-1);
+      if(window.fetch){ fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body}); }
+      else{ var u2=url+'?'+body; new Image().src=u2; }
+    }
     try{
-      var leadUrl='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+ADMIN_CHAT
-        +'&text='+encodeURIComponent(text)+'&parse_mode=HTML&disable_web_page_preview=1';
-      new Image().src=leadUrl;
+      post('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{chat_id:ADMIN_CHAT,text:text,parse_mode:'HTML',disable_web_page_preview:1});
       attempted++;
     }catch(e){}
 
-    // Подтверждение клиенту от бота (короткий текст, GET)
+    // Подтверждение клиенту от бота (короткий текст)
     if(clientId&&clientId!==ADMIN_CHAT){
       try{
-        new Image().src='https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage?chat_id='+clientId
-          +'&text='+encodeURIComponent('Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.');
+        post('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{chat_id:clientId,text:'Спасибо! Ваша анкета получена. Специалист Жилфонда свяжется с вами в ближайшее время.'});
       }catch(e){}
     }
 
